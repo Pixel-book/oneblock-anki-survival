@@ -49,3 +49,26 @@
 ### Test
 1. Structure validation and package contents will be checked before release.
 2. Real Bedrock import still needs manual in-game verification.
+
+## 2026-06-06 10:10
+
+### Changed
+1. Fixed initial spawn safety so players are teleported to the core after first load.
+2. Added early repeated core repair checks after script startup.
+3. Updated package version to 0.1.2.
+
+### Why
+1. A void world can spawn the player near origin but without support; the previous safety check treated that as safe.
+
+### Files
+1. `packs/OneBlockAnki_BP/scripts/main.js`
+2. `packs/OneBlockAnki_BP/scripts/world_init.js`
+3. `packs/OneBlockAnki_BP/scripts/constants.js`
+
+### Risk
+1. During the first few seconds after import, players near the start area may be snapped to the core to prevent falling.
+
+### Test
+1. Static structure validation passed.
+2. Script syntax checks passed.
+3. Real Bedrock import still needs manual in-game verification.

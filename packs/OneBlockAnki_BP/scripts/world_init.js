@@ -21,6 +21,15 @@ export function placeCoreIfMissing(blockType = DEFAULT_CORE_BLOCK) {
   }
 }
 
+function isPassableBlock(block) {
+  return !block || block.typeId === "minecraft:air" || block.typeId === "minecraft:void_air" || block.typeId === "minecraft:cave_air";
+}
+
+function hasStartSupport() {
+  const block = blockAt(CORE_BLOCK_POS);
+  return !isPassableBlock(block);
+}
+
 export function initializeWorldIfNeeded() {
   if (getWorldBoolean(WORLD_PROPS.initialized, false)) return;
   setWorldBoolean(WORLD_PROPS.initialized, true);
@@ -50,7 +59,25 @@ export function initializePlayerIfNeeded(player) {
 
 export function teleportPlayerToStartIfUnsafe(player) {
   if (player.dimension.id !== OVERWORLD_ID) return;
-  if (player.location.y > 0 && Math.abs(player.location.x) < 32 && Math.abs(player.location.z) < 32) return;
-  system.runTimeout(() => player.teleport(PLAYER_SPAWN_POS, { dimension: overworld() }), 1);
+  placeCoreIfMissing();
+  const nearStart = Math.abs(player.location.x - CORE_BLOCK_POS.x) < 4 && Math.abs(player.location.z - CORE_BLOCK_POS.z) < 4;
+  const standingNearCore = nearStart && player.location.y >= CORE_BLOCK_POS.y + 0.5 && player.location.y <= CORE_BLOCK_POS.y + 4 && hasStartSupport();
+  if (standingNearCore) return;
+  const fallingNearOrigin = Math.abs(player.location.x) < 32 && Math.abs(player.location.z) < 32 && player.location.y < CORE_BLOCK_POS.y + 12;
+  const farBelowStart = player.location.y < CORE_BLOCK_POS.y - 8;
+  if (fallingNearOrigin || farBelowStart || eventlessNeedsFirstTeleport(player)) {
+    teleportPlayerToStart(player);
+  }
 }
 
+function eventlessNeedsFirstTeleport(player) {
+  return Math.abs(player.location.x) < 32 && Math.abs(player.location.z) < 32 && !hasStartSupport();
+}
+
+export function teleportPlayerToStart(player) {
+  if (player.dimension.id !== OVERWORLD_ID) return;
+  system.runTimeout(() => {
+    placeCoreIfMissing();
+    player.teleport(PLAYER_SPAWN_POS, { dimension: overworld() });
+  }, 1);
+}

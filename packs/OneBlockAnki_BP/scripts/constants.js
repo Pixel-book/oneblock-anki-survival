@@ -1,4 +1,4 @@
-export const VERSION = "0.1.0";
+export const VERSION = "0.1.2";
 
 export const OVERWORLD_ID = "minecraft:overworld";
 export const NETHER_ID = "minecraft:nether";
@@ -43,4 +43,3 @@ export const PLAYER_PROPS = {
   currentQuizJson: "oba:current_quiz_json",
   lastAltarWarningTick: "oba:last_altar_warning_tick"
 };
-

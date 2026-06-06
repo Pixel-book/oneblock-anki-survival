@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2
+
+- Fixed first spawn safety: the core block is repaired immediately after script load.
+- Initial players are teleported to the core block instead of being treated as safe while falling in the void.
+- Added repeated early repair checks for slow Bedrock world initialization.
+
 ## 0.1.1
 
 - Rotated OneBlock behavior/resource pack UUIDs to avoid import conflicts with the first test build.

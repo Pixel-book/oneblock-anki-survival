@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BP = ROOT / "packs" / "OneBlockAnki_BP"
 RP = ROOT / "packs" / "OneBlockAnki_RP"
 RELEASES = ROOT / "releases"
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 def zip_dir(source: Path, target: Path, prefix: str = "") -> None:
     with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as archive:

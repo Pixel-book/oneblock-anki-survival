@@ -4,14 +4,14 @@
     "name": "OneBlock Anki Survival Resources",
     "description": "Resource pack for OneBlock Anki Survival.",
     "uuid": "ae286167-b88e-49eb-b3f3-d8284a6575ba",
-    "version": [0, 1, 1],
+    "version": [0, 1, 2],
     "min_engine_version": [1, 21, 80]
   },
   "modules": [
     {
       "type": "resources",
       "uuid": "f67bcf4b-52ad-4230-b978-77a9d0a8dbbf",
-      "version": [0, 1, 1]
+      "version": [0, 1, 2]
     }
   ]
 }

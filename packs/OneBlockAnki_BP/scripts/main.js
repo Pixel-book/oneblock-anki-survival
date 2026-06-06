@@ -4,15 +4,31 @@ import { handleAltarPlaceBefore, handleAltarProximityTick, noteDimensionChange, 
 import { handleExplosionAfter, handleExplosionBefore } from "./explosion_guard.js";
 import { handleCoreBreakAfter, handleCoreBreakBefore } from "./oneblock_core.js";
 import { sendStatus } from "./multiplayer_sync.js";
-import { initializePlayerIfNeeded, initializeWorldIfNeeded, placeCoreIfMissing, teleportPlayerToStartIfUnsafe } from "./world_init.js";
+import { initializePlayerIfNeeded, initializeWorldIfNeeded, placeCoreIfMissing, teleportPlayerToStart, teleportPlayerToStartIfUnsafe } from "./world_init.js";
 
 world.afterEvents.playerSpawn.subscribe((event) => {
-  if (!event.initialSpawn) return;
   initializeWorldIfNeeded();
   initializePlayerIfNeeded(event.player);
   placeCoreIfMissing();
-  teleportPlayerToStartIfUnsafe(event.player);
+  if (event.initialSpawn) teleportPlayerToStart(event.player);
+  else teleportPlayerToStartIfUnsafe(event.player);
 });
+
+system.run(() => {
+  initializeWorldIfNeeded();
+  placeCoreIfMissing();
+  for (const player of world.getAllPlayers()) {
+    initializePlayerIfNeeded(player);
+    teleportPlayerToStart(player);
+  }
+});
+
+for (const delay of [2, 10, 40, 100]) {
+  system.runTimeout(() => {
+    placeCoreIfMissing();
+    for (const player of world.getAllPlayers()) teleportPlayerToStart(player);
+  }, delay);
+}
 
 world.beforeEvents.playerBreakBlock?.subscribe(handleCoreBreakBefore);
 world.afterEvents.playerBreakBlock?.subscribe(handleCoreBreakAfter);
@@ -26,7 +42,10 @@ world.afterEvents.itemCompleteUse?.subscribe((event) => noteInventoryItem(event.
 system.runInterval(() => {
   placeCoreIfMissing();
   handleAltarProximityTick();
-  for (const player of world.getAllPlayers()) sendStatus(player);
+  for (const player of world.getAllPlayers()) {
+    teleportPlayerToStartIfUnsafe(player);
+    sendStatus(player);
+  }
 }, 20);
 
 console.warn(`[OBA][INFO][Main] OneBlock Anki Survival ${VERSION} loaded.`);

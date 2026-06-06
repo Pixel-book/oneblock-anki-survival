@@ -15,7 +15,7 @@ Outputs:
 releases/OneBlockAnki_BP.mcpack
 releases/OneBlockAnki_RP.mcpack
 releases/OneBlockAnki_Addon.mcaddon
-releases/oneblock-anki-survival-0.1.1-source.zip
+releases/oneblock-anki-survival-0.1.2-source.zip
 ```
 
 ## Architecture
