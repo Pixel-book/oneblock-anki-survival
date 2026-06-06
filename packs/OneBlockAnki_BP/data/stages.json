@@ -1,0 +1,12 @@
+[
+  { "id": 0, "name": "tutorial", "minRefreshes": 0 },
+  { "id": 1, "name": "plains", "minRefreshes": 30 },
+  { "id": 2, "name": "cave", "minRefreshes": 120 },
+  { "id": 3, "name": "farm_village", "minRefreshes": 300 },
+  { "id": 4, "name": "ocean", "minRefreshes": 550 },
+  { "id": 5, "name": "dungeon", "minRefreshes": 850 },
+  { "id": 6, "name": "nether_prepare", "minRefreshes": 1200 },
+  { "id": 7, "name": "end_prepare", "minRefreshes": 1700 },
+  { "id": 8, "name": "loop_after_dragon", "minRefreshes": 2400 }
+]
+

@@ -1,0 +1,17 @@
+# Anki Schema
+
+First version uses embedded JS cards.
+
+```json
+{
+  "id": "n5_001",
+  "front": "食べる",
+  "back": "吃",
+  "choices": ["吃", "喝", "跑", "看"],
+  "answer": "吃",
+  "tags": ["N5", "verb"]
+}
+```
+
+No APKG parsing is included in OneBlock 0.1.0.
+
