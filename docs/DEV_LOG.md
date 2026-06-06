@@ -22,3 +22,30 @@
 1. Static structure and package validation planned.
 2. Real Bedrock world import still needs manual in-game verification.
 
+## 2026-06-06 09:20
+
+### Changed
+1. Rotated all OneBlock behavior/resource pack UUIDs for 0.1.1.
+2. Added `OneBlockAnki_RP` and made the behavior pack depend on its header UUID.
+3. Updated the build so `OneBlockAnki_Addon.mcaddon` contains both BP and RP folders.
+4. Extended validation to reject missing RP files or missing BP to RP dependency.
+
+### Why
+1. The first package could conflict with previously imported UUIDs and did not automatically import a resource pack.
+
+### Files
+1. `packs/OneBlockAnki_BP/manifest.json`
+2. `packs/OneBlockAnki_RP`
+3. `tools/build_pack.py`
+4. `tools/validate_structure.py`
+5. `README.md`
+6. `README_DEV.md`
+7. `CHANGELOG.md`
+8. `docs/RELEASE_CHECKLIST.md`
+
+### Risk
+1. Existing 0.1.0 imports may remain cached in Minecraft storage until the user deletes the old pack entries.
+
+### Test
+1. Structure validation and package contents will be checked before release.
+2. Real Bedrock import still needs manual in-game verification.

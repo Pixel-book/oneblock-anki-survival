@@ -3,25 +3,29 @@
   "header": {
     "name": "OneBlock Anki Survival",
     "description": "Void overworld one block survival with Anki-powered refresh balance.",
-    "uuid": "bab0c254-b028-4c76-8f15-a8e5e303ac79",
-    "version": [0, 1, 0],
+    "uuid": "db3c31ff-0ad8-46ce-af6a-4b1ede34c910",
+    "version": [0, 1, 1],
     "min_engine_version": [1, 21, 80]
   },
   "modules": [
     {
       "type": "data",
-      "uuid": "6e764212-36ef-426f-b215-e1cd46d6ab12",
-      "version": [0, 1, 0]
+      "uuid": "9e6f4ee6-3523-4da4-8895-c98e21b2f2b6",
+      "version": [0, 1, 1]
     },
     {
       "type": "script",
       "language": "javascript",
       "entry": "scripts/main.js",
-      "uuid": "05ba72d6-0c29-44df-8f19-7b5902850c94",
-      "version": [0, 1, 0]
+      "uuid": "bf51e876-af31-4ef6-97ff-26c5177425de",
+      "version": [0, 1, 1]
     }
   ],
   "dependencies": [
+    {
+      "uuid": "ae286167-b88e-49eb-b3f3-d8284a6575ba",
+      "version": [0, 1, 1]
+    },
     {
       "module_name": "@minecraft/server",
       "version": "2.0.0"
@@ -32,4 +36,3 @@
     }
   ]
 }
-

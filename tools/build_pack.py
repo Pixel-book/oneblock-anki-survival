@@ -9,7 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BP = ROOT / "packs" / "OneBlockAnki_BP"
+RP = ROOT / "packs" / "OneBlockAnki_RP"
 RELEASES = ROOT / "releases"
+VERSION = "0.1.1"
 
 def zip_dir(source: Path, target: Path, prefix: str = "") -> None:
     with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as archive:
@@ -26,6 +28,14 @@ def source_zip(target: Path) -> None:
                 continue
             archive.write(file, rel.as_posix())
 
+def addon_zip(target: Path) -> None:
+    with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as archive:
+        for pack, prefix in ((BP, "OneBlockAnki_BP"), (RP, "OneBlockAnki_RP")):
+            for file in pack.rglob("*"):
+                if file.is_file():
+                    name = Path(prefix) / file.relative_to(pack)
+                    archive.write(file, name.as_posix())
+
 def main() -> None:
     print("[BUILD] Checking pack structure...")
     subprocess.run([sys.executable, str(ROOT / "tools" / "validate_structure.py")], check=True)
@@ -39,12 +49,13 @@ def main() -> None:
                 file.unlink()
     print("[BUILD] Creating OneBlockAnki_BP.mcpack...")
     zip_dir(BP, RELEASES / "OneBlockAnki_BP.mcpack")
+    print("[BUILD] Creating OneBlockAnki_RP.mcpack...")
+    zip_dir(RP, RELEASES / "OneBlockAnki_RP.mcpack")
     print("[BUILD] Creating OneBlockAnki_Addon.mcaddon...")
-    zip_dir(BP, RELEASES / "OneBlockAnki_Addon.mcaddon", "OneBlockAnki_BP")
+    addon_zip(RELEASES / "OneBlockAnki_Addon.mcaddon")
     print("[BUILD] Creating source zip...")
-    source_zip(RELEASES / "oneblock-anki-survival-0.1.0-source.zip")
+    source_zip(RELEASES / f"oneblock-anki-survival-{VERSION}-source.zip")
     print("[BUILD] Done.")
 
 if __name__ == "__main__":
     main()
-

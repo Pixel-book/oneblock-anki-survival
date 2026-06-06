@@ -1,7 +1,7 @@
 # Test Report
 
 测试日期：2026-06-06
-测试版本：0.1.0
+测试版本：0.1.1
 Minecraft 版本：待实机填写
 平台：Windows / BDS 待实机填写
 
@@ -31,4 +31,5 @@ Minecraft 版本：待实机填写
 | T020 | 多人阶段 | static-pass | world dynamic properties |
 | T021 | 重进世界 | static-pass | 不重置余额 |
 | T022 | 日志文件 | pass | 已更新 DEV_LOG 和 TEST_REPORT |
-
+| T023 | Add-on 同时导入 BP/RP | static-pass | 0.1.1 `.mcaddon` 应包含 `OneBlockAnki_BP` 和 `OneBlockAnki_RP` |
+| T024 | UUID 冲突修复 | static-pass | 0.1.1 已更换 BP/RP header 与 module UUID |

@@ -13,8 +13,9 @@ Outputs:
 
 ```text
 releases/OneBlockAnki_BP.mcpack
+releases/OneBlockAnki_RP.mcpack
 releases/OneBlockAnki_Addon.mcaddon
-releases/oneblock-anki-survival-0.1.0-source.zip
+releases/oneblock-anki-survival-0.1.1-source.zip
 ```
 
 ## Architecture
@@ -31,3 +32,4 @@ releases/oneblock-anki-survival-0.1.0-source.zip
 - `explosion_guard.js`: core explosion protection
 - `altar_zone.js`: reserved end altar area
 
+`packs/OneBlockAnki_RP` is packaged into the `.mcaddon` alongside the behavior pack. The behavior pack manifest depends on the resource pack header UUID so Bedrock imports them together.

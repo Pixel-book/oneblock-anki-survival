@@ -8,6 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BP = ROOT / "packs" / "OneBlockAnki_BP"
+RP = ROOT / "packs" / "OneBlockAnki_RP"
 
 REQUIRED = [
     "README.md",
@@ -33,6 +34,10 @@ REQUIRED = [
     "packs/OneBlockAnki_BP/scripts/anki_ui.js",
     "packs/OneBlockAnki_BP/texts/en_US.lang",
     "packs/OneBlockAnki_BP/texts/zh_CN.lang",
+    "packs/OneBlockAnki_RP/manifest.json",
+    "packs/OneBlockAnki_RP/pack_icon.png",
+    "packs/OneBlockAnki_RP/texts/en_US.lang",
+    "packs/OneBlockAnki_RP/texts/zh_CN.lang",
 ]
 
 def fail(message: str) -> None:
@@ -46,11 +51,20 @@ def main() -> None:
     if (BP / "dimensions" / "nether.json").exists() or (BP / "dimensions" / "the_end.json").exists():
         fail("nether/the_end dimension files must not exist")
     manifest = json.loads((BP / "manifest.json").read_text(encoding="utf-8"))
-    uuids = [manifest["header"]["uuid"]] + [module["uuid"] for module in manifest["modules"]]
+    rp_manifest = json.loads((RP / "manifest.json").read_text(encoding="utf-8"))
+    uuids = (
+        [manifest["header"]["uuid"]]
+        + [module["uuid"] for module in manifest["modules"]]
+        + [rp_manifest["header"]["uuid"]]
+        + [module["uuid"] for module in rp_manifest["modules"]]
+    )
     if any(not re.fullmatch(r"[0-9a-fA-F-]{36}", value) for value in uuids):
         fail("manifest contains invalid UUID")
     if len(set(uuids)) != len(uuids):
         fail("manifest UUIDs must be unique")
+    dependencies = manifest.get("dependencies", [])
+    if not any(dep.get("uuid") == rp_manifest["header"]["uuid"] for dep in dependencies):
+        fail("behavior pack must depend on resource pack header UUID")
     overworld = json.loads((BP / "dimensions" / "overworld.json").read_text(encoding="utf-8"))
     generation = overworld["minecraft:dimension"]["components"]["minecraft:generation"]
     if generation.get("generator_type") != "void":
@@ -62,4 +76,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
