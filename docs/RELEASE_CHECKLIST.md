@@ -10,4 +10,5 @@
 - [x] `.mcaddon` build generated.
 - [x] `.mcaddon` contains behavior pack and resource pack.
 - [x] Source zip generated.
-- [ ] Manual Bedrock import tested.
+- [x] BDS clean-world smoke tested.
+- [ ] Player-client UI and two-player manual Bedrock testing.

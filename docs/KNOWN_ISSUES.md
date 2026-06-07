@@ -1,25 +1,25 @@
 # Known Issues
 
-## ISSUE-001 Real Bedrock runtime verification pending
+## ISSUE-001 Player-client UI verification pending
 
 状态：open
 影响：medium
-模块：other
+模块：anki_ui / multiplayer_sync / other
 
 ### Description
-Static package validation and build pass locally, but a new Bedrock world import/playthrough must still be verified manually.
+BDS command-line smoke testing passes for clean world startup, core placement, refresh, stage progression, and basic explosion survival. Player-client form UI, first-person spawn feel, two-player simultaneous mining, and long-form progression still need manual in-game verification.
 
 ### Reproduction
-Import `OneBlockAnki_Addon.mcaddon` into a new world and run through T001-T022.
+Join `127.0.0.1:19172` or import `OneBlockAnki_Addon.mcaddon` into a local Minecraft world, then run through Anki quiz, zero-balance prompt, test menu, and two-player core mining.
 
 ### Expected
-World loads as void Overworld with one block survival loop.
+Player starts on the core, UI opens correctly, quiz rewards balance, and multiplayer state remains separated per player/shared per world.
 
 ### Actual
-Pending manual test.
+BDS path verified; player-client UI path pending.
 
 ### Notes
-Stable Script API event availability can vary by Minecraft version.
+Use `scriptevent oba:test_menu` from an operator player to open the quick test menu.
 
 ## ISSUE-002 Old 0.1.0 pack cache may remain after import
 

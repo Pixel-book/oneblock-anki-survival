@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.3
+
+- Added BDS-focused `/scriptevent` diagnostics and a lightweight in-game test menu entry.
+- Fixed clean dedicated-server startup so the core ticking area and initial core block are created without manual commands.
+- Stopped repeated background teleports so falling into the void can behave normally after the first safe spawn.
+- Removed gravity-affected blocks from direct core generation and moved gravel/sand/flint access into safe chest/guarantee paths.
+- Verified clean BDS startup, core refresh, stage progression, ocean/plains core stability, and core survival after nearby TNT/creeper summon.
+
 ## 0.1.2
 
 - Fixed first spawn safety: the core block is repaired immediately after script load.

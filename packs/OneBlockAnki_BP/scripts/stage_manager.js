@@ -28,8 +28,7 @@ export function updateStageAfterRefresh(player, totalRefreshes) {
   const next = stageForRefreshes(totalRefreshes);
   if (next.id !== previous) {
     setWorldNumber(WORLD_PROPS.stageId, next.id);
-    player.sendMessage("§b单方块的气息发生了变化。");
+    player?.sendMessage?.("§b单方块的气息发生了变化。");
   }
   return next;
 }
-

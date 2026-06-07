@@ -1,7 +1,7 @@
 import { system, world } from "@minecraft/server";
 import { CORE_BLOCK_POS, DEFAULT_CORE_BLOCK, DEFAULT_INITIAL_BALANCE, OVERWORLD_ID, PLAYER_PROPS, PLAYER_SPAWN_POS, WORLD_PROPS } from "./constants.js";
 import { DEFAULT_GUARANTEE_STATE, saveGuarantees } from "./guarantee_manager.js";
-import { logInfo, logError } from "./logger.js";
+import { logInfo, logWarn, logError } from "./logger.js";
 import { getPlayerNumber, getWorldBoolean, setPlayerNumber, setWorldBoolean, setWorldNumber, setWorldString } from "./storage.js";
 
 export function overworld() {
@@ -12,10 +12,49 @@ export function blockAt(pos) {
   return overworld().getBlock(pos);
 }
 
+let coreTickingAreaReady = false;
+let coreTickingAreaAttempts = 0;
+
+export function runOverworldCommand(command, scope = "WorldInit") {
+  try {
+    const dimension = overworld();
+    if (typeof dimension.runCommand === "function") {
+      dimension.runCommand(command);
+      return true;
+    }
+    if (typeof dimension.runCommandAsync === "function") {
+      dimension.runCommandAsync(command).catch((error) => logWarn(scope, `command failed: ${command} ${error}`));
+      return true;
+    }
+    logWarn(scope, `command API unavailable: ${command}`);
+    return false;
+  } catch (error) {
+    logWarn(scope, `command failed: ${command} ${error}`);
+    return false;
+  }
+}
+
+export function ensureCoreTickingArea() {
+  if (coreTickingAreaReady || coreTickingAreaAttempts >= 10) return;
+  coreTickingAreaAttempts += 1;
+  coreTickingAreaReady = runOverworldCommand(`tickingarea add circle ${CORE_BLOCK_POS.x} ${CORE_BLOCK_POS.y} ${CORE_BLOCK_POS.z} 2 oba_core true`);
+}
+
+export function setWorldSpawnToStart() {
+  runOverworldCommand(`setworldspawn ${Math.floor(PLAYER_SPAWN_POS.x)} ${Math.floor(PLAYER_SPAWN_POS.y)} ${Math.floor(PLAYER_SPAWN_POS.z)}`);
+}
+
 export function placeCoreIfMissing(blockType = DEFAULT_CORE_BLOCK) {
   try {
+    ensureCoreTickingArea();
     const block = blockAt(CORE_BLOCK_POS);
-    if (!block || block.typeId === "minecraft:air" || block.typeId === "minecraft:void_air") block?.setType(blockType);
+    if (block && (block.typeId === "minecraft:air" || block.typeId === "minecraft:void_air" || block.typeId === "minecraft:cave_air")) {
+      block.setType(blockType);
+      return;
+    }
+    if (!block) {
+      runOverworldCommand(`setblock ${CORE_BLOCK_POS.x} ${CORE_BLOCK_POS.y} ${CORE_BLOCK_POS.z} ${blockType}`);
+    }
   } catch (error) {
     logError("WorldInit", "core repair failed", error);
   }
@@ -42,6 +81,8 @@ export function initializeWorldIfNeeded() {
   setWorldBoolean(WORLD_PROPS.blazeProofAny, false);
   setWorldBoolean(WORLD_PROPS.dragonDefeated, false);
   saveGuarantees(DEFAULT_GUARANTEE_STATE);
+  ensureCoreTickingArea();
+  setWorldSpawnToStart();
   placeCoreIfMissing();
   logInfo("WorldInit", "world initialized");
 }
@@ -64,8 +105,7 @@ export function teleportPlayerToStartIfUnsafe(player) {
   const standingNearCore = nearStart && player.location.y >= CORE_BLOCK_POS.y + 0.5 && player.location.y <= CORE_BLOCK_POS.y + 4 && hasStartSupport();
   if (standingNearCore) return;
   const fallingNearOrigin = Math.abs(player.location.x) < 32 && Math.abs(player.location.z) < 32 && player.location.y < CORE_BLOCK_POS.y + 12;
-  const farBelowStart = player.location.y < CORE_BLOCK_POS.y - 8;
-  if (fallingNearOrigin || farBelowStart || eventlessNeedsFirstTeleport(player)) {
+  if (fallingNearOrigin || eventlessNeedsFirstTeleport(player)) {
     teleportPlayerToStart(player);
   }
 }

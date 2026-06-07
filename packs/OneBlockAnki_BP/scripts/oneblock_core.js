@@ -7,9 +7,30 @@ import { pick, STAGE_POOLS } from "./loot_tables.js";
 import { maybeSpawnMob } from "./spawn_manager.js";
 import { currentStage, updateStageAfterRefresh } from "./stage_manager.js";
 import { getPlayerNumber, getWorldNumber, setPlayerNumber, setWorldNumber } from "./storage.js";
-import { blockAt, placeCoreIfMissing } from "./world_init.js";
+import { blockAt, placeCoreIfMissing, runOverworldCommand } from "./world_init.js";
 
 let coreRefreshLock = false;
+const UNSAFE_CORE_BLOCKS = new Set([
+  "minecraft:gravel",
+  "minecraft:sand",
+  "minecraft:red_sand",
+  "minecraft:white_concrete_powder",
+  "minecraft:orange_concrete_powder",
+  "minecraft:magenta_concrete_powder",
+  "minecraft:light_blue_concrete_powder",
+  "minecraft:yellow_concrete_powder",
+  "minecraft:lime_concrete_powder",
+  "minecraft:pink_concrete_powder",
+  "minecraft:gray_concrete_powder",
+  "minecraft:light_gray_concrete_powder",
+  "minecraft:cyan_concrete_powder",
+  "minecraft:purple_concrete_powder",
+  "minecraft:blue_concrete_powder",
+  "minecraft:brown_concrete_powder",
+  "minecraft:green_concrete_powder",
+  "minecraft:red_concrete_powder",
+  "minecraft:black_concrete_powder"
+]);
 
 export function isCorePosition(location) {
   return location?.x === CORE_BLOCK_POS.x && location?.y === CORE_BLOCK_POS.y && location?.z === CORE_BLOCK_POS.z;
@@ -51,17 +72,44 @@ function executeCoreRefresh(player) {
   setWorldNumber(WORLD_PROPS.totalRefreshes, total);
   const stage = updateStageAfterRefresh(player, total);
   const pool = applyGuarantees(stage, STAGE_POOLS[stage.name] ?? STAGE_POOLS.tutorial);
-  const blockId = pick(pool.blocks);
-  blockAt(CORE_BLOCK_POS)?.setType(blockId);
+  const blockId = pickSafeCoreBlock(pool.blocks);
+  setCoreBlock(blockId);
   recordResource(blockId);
   maybeCreateChest(pool.chest);
   maybeSpawnMob(pool.mobs, stage);
   logDebug("OneBlockCore", `refresh=${total} stage=${stage.name} block=${blockId}`);
 }
 
+export function debugRefreshCoreWithoutPlayer() {
+  const total = getWorldNumber(WORLD_PROPS.totalRefreshes, 0) + 1;
+  setWorldNumber(WORLD_PROPS.totalRefreshes, total);
+  const stage = updateStageAfterRefresh(undefined, total);
+  const pool = applyGuarantees(stage, STAGE_POOLS[stage.name] ?? STAGE_POOLS.tutorial);
+  const blockId = pickSafeCoreBlock(pool.blocks);
+  const actualBlockId = setCoreBlock(blockId);
+  recordResource(blockId);
+  logDebug("OneBlockCore", `debug refresh=${total} stage=${stage.name} block=${blockId} actual=${actualBlockId}`);
+  return { total, stage, blockId, actualBlockId };
+}
+
+function setCoreBlock(blockId) {
+  const block = blockAt(CORE_BLOCK_POS);
+  if (block) {
+    block.setType(blockId);
+    return block.typeId;
+  }
+  runOverworldCommand(`setblock ${CORE_BLOCK_POS.x} ${CORE_BLOCK_POS.y} ${CORE_BLOCK_POS.z} ${blockId}`, "OneBlockCore");
+  return blockAt(CORE_BLOCK_POS)?.typeId ?? "missing";
+}
+
 function safeBlockForCurrentStage() {
   const pool = STAGE_POOLS[currentStage().name] ?? STAGE_POOLS.tutorial;
-  return pool.blocks.find((block) => !block.includes("water") && !block.includes("lava")) ?? DEFAULT_CORE_BLOCK;
+  return pool.blocks.find((block) => !block.includes("water") && !block.includes("lava") && !UNSAFE_CORE_BLOCKS.has(block)) ?? DEFAULT_CORE_BLOCK;
+}
+
+function pickSafeCoreBlock(blocks) {
+  const safeBlocks = blocks.filter((block) => !UNSAFE_CORE_BLOCKS.has(block));
+  return pick(safeBlocks.length ? safeBlocks : [DEFAULT_CORE_BLOCK]);
 }
 
 function maybeCreateChest(items) {
@@ -80,4 +128,3 @@ function maybeCreateChest(items) {
     logError("OneBlockCore", "chest event failed", error);
   }
 }
-

@@ -5,8 +5,8 @@ export const STAGE_POOLS = {
     mobs: []
   },
   plains: {
-    blocks: ["minecraft:dirt", "minecraft:grass_block", "minecraft:oak_log", "minecraft:birch_log", "minecraft:oak_leaves", "minecraft:birch_leaves", "minecraft:cobblestone", "minecraft:gravel", "minecraft:sand", "minecraft:clay"],
-    chest: ["minecraft:apple", "minecraft:wheat_seeds", "minecraft:bone_meal"],
+    blocks: ["minecraft:dirt", "minecraft:grass_block", "minecraft:oak_log", "minecraft:birch_log", "minecraft:oak_leaves", "minecraft:birch_leaves", "minecraft:cobblestone", "minecraft:clay", "minecraft:sandstone"],
+    chest: ["minecraft:apple", "minecraft:wheat_seeds", "minecraft:bone_meal", "minecraft:gravel", "minecraft:sand", "minecraft:flint"],
     mobs: ["minecraft:chicken", "minecraft:cow", "minecraft:sheep", "minecraft:pig"]
   },
   cave: {
@@ -20,8 +20,8 @@ export const STAGE_POOLS = {
     mobs: ["minecraft:villager", "minecraft:zombie_villager", "minecraft:cat"]
   },
   ocean: {
-    blocks: ["minecraft:sand", "minecraft:sandstone", "minecraft:clay", "minecraft:prismarine", "minecraft:sea_lantern", "minecraft:ice", "minecraft:packed_ice"],
-    chest: ["minecraft:water_bucket", "minecraft:fishing_rod", "minecraft:kelp", "minecraft:seagrass"],
+    blocks: ["minecraft:sandstone", "minecraft:clay", "minecraft:prismarine", "minecraft:sea_lantern", "minecraft:ice", "minecraft:packed_ice"],
+    chest: ["minecraft:water_bucket", "minecraft:fishing_rod", "minecraft:kelp", "minecraft:seagrass", "minecraft:sand"],
     mobs: ["minecraft:cod", "minecraft:salmon", "minecraft:tropical_fish", "minecraft:drowned"]
   },
   dungeon: {
@@ -49,4 +49,3 @@ export const STAGE_POOLS = {
 export function pick(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
-

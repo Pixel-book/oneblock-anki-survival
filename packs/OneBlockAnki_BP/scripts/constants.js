@@ -1,4 +1,4 @@
-export const VERSION = "0.1.2";
+export const VERSION = "0.1.3";
 
 export const OVERWORLD_ID = "minecraft:overworld";
 export const NETHER_ID = "minecraft:nether";

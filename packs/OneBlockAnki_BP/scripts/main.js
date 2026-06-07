@@ -4,29 +4,29 @@ import { handleAltarPlaceBefore, handleAltarProximityTick, noteDimensionChange, 
 import { handleExplosionAfter, handleExplosionBefore } from "./explosion_guard.js";
 import { handleCoreBreakAfter, handleCoreBreakBefore } from "./oneblock_core.js";
 import { sendStatus } from "./multiplayer_sync.js";
-import { initializePlayerIfNeeded, initializeWorldIfNeeded, placeCoreIfMissing, teleportPlayerToStart, teleportPlayerToStartIfUnsafe } from "./world_init.js";
+import { initializePlayerIfNeeded, initializeWorldIfNeeded, placeCoreIfMissing, setWorldSpawnToStart, teleportPlayerToStart } from "./world_init.js";
+import { runTestCommand } from "./diagnostics.js";
 
 world.afterEvents.playerSpawn.subscribe((event) => {
   initializeWorldIfNeeded();
   initializePlayerIfNeeded(event.player);
   placeCoreIfMissing();
   if (event.initialSpawn) teleportPlayerToStart(event.player);
-  else teleportPlayerToStartIfUnsafe(event.player);
 });
 
 system.run(() => {
   initializeWorldIfNeeded();
+  setWorldSpawnToStart();
   placeCoreIfMissing();
   for (const player of world.getAllPlayers()) {
     initializePlayerIfNeeded(player);
-    teleportPlayerToStart(player);
   }
 });
 
 for (const delay of [2, 10, 40, 100]) {
   system.runTimeout(() => {
+    setWorldSpawnToStart();
     placeCoreIfMissing();
-    for (const player of world.getAllPlayers()) teleportPlayerToStart(player);
   }, delay);
 }
 
@@ -38,14 +38,15 @@ world.beforeEvents.playerPlaceBlock?.subscribe(handleAltarPlaceBefore);
 world.afterEvents.playerDimensionChange?.subscribe(noteDimensionChange);
 world.afterEvents.entityDie?.subscribe(noteEntityDie);
 world.afterEvents.itemCompleteUse?.subscribe((event) => noteInventoryItem(event.source, event.itemStack));
+const scriptEventBus = system.afterEvents?.scriptEventReceive ?? world.afterEvents?.scriptEventReceive;
+scriptEventBus?.subscribe((event) => {
+  if (event.id === "oba:test" || event.id === "oba:test_menu") runTestCommand(event.id === "oba:test_menu" ? "menu" : event.message, event.sourceEntity);
+});
 
 system.runInterval(() => {
   placeCoreIfMissing();
   handleAltarProximityTick();
-  for (const player of world.getAllPlayers()) {
-    teleportPlayerToStartIfUnsafe(player);
-    sendStatus(player);
-  }
+  for (const player of world.getAllPlayers()) sendStatus(player);
 }, 20);
 
 console.warn(`[OBA][INFO][Main] OneBlock Anki Survival ${VERSION} loaded.`);

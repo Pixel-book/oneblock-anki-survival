@@ -64,6 +64,7 @@ export function applyGuarantees(stage, pool) {
     const repeats = Math.ceil(getPityMultiplier(entry));
     for (let i = 0; i < repeats; i += 1) target.push(...values);
   };
+  addWeighted("flint", ["minecraft:flint"], chest);
   addWeighted("iron", ["minecraft:iron_ore"], blocks);
   addWeighted("water", stage.name === "ocean" ? ["minecraft:water_bucket"] : ["minecraft:ice"], stage.name === "ocean" ? chest : blocks);
   addWeighted("lava", ["minecraft:lava_bucket"], chest);
@@ -71,6 +72,7 @@ export function applyGuarantees(stage, pool) {
   addWeighted("villager", ["minecraft:villager"], mobs);
   addWeighted("enderPearl", ["minecraft:ender_pearl"], chest);
   if (state.water.attempts >= state.water.hardPity && stage.id >= 4) chest.push("minecraft:water_bucket");
+  if (state.flint.attempts >= state.flint.hardPity && stage.id >= 1) chest.push("minecraft:flint");
   if (state.lava.attempts >= state.lava.hardPity && stage.id >= 6) chest.push("minecraft:lava_bucket");
   if (state.obsidian.attempts >= state.obsidian.hardPity && stage.id >= 6) blocks.push("minecraft:obsidian", "minecraft:obsidian");
   if (state.villager.attempts >= state.villager.hardPity && stage.id >= 3) mobs.push("minecraft:villager");
@@ -80,6 +82,7 @@ export function applyGuarantees(stage, pool) {
 export function recordResource(typeId) {
   const map = {
     "minecraft:gravel": "flint",
+    "minecraft:flint": "flint",
     "minecraft:iron_ore": "iron",
     "minecraft:water_bucket": "water",
     "minecraft:ice": "water",
@@ -95,4 +98,3 @@ export function recordResource(typeId) {
   };
   if (map[typeId]) markProvided(map[typeId]);
 }
-
